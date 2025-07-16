@@ -10,7 +10,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
-from src.utils.slugify import slugify
+from src.utils.slugify import extract_card_info
 
 import requests
 
@@ -22,7 +22,10 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 title_pattern = re.compile(r"<title>(.*?)</title>", re.IGNORECASE | re.DOTALL)
 
 options = webdriver.ChromeOptions()
-options.add_argument("--start-maximized")
+options.add_argument("--headless=new")  # usa "--headless" si tu Chrome es viejo
+options.add_argument("--disable-gpu")   # recomendable en Windows
+options.add_argument("--no-sandbox")    # a veces necesario en algunos entornos
+options.add_argument("--window-size=1920,1080")  # previene errores de renderizado
 
 driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()),
@@ -51,15 +54,14 @@ try:
         text_contents = driver.find_elements(By.CSS_SELECTOR, text_goal)
         # text_contents = text_box.find_elements(By., "p")
         card_body = card_name
-        for content in text_contents:
-            raw_text = content.text.strip()
-            # Quitar símbolos { }, → y posibles daños ": número"
-            filtered = re.sub(r"[{}→:]\s*\d*", "", raw_text).strip()
-            # Comprobar si queda al menos un carácter alfanumérico
-            if re.search(r"[a-zA-Z0-9]", filtered) and card_type.text != "Trainer":
-                card_body += f" {filtered}"
-
-        print(f"[OK] [{card_body}] {slug}")
+        if (not card_type.text == "Trainer") :
+            for content in text_contents:
+                raw_text = content.text.strip()
+                # print(f"[DEBUG] {raw_text}")
+                card_body += f" {extract_card_info(raw_text)}"
+# card_type.text != "Trainer"
+        # print(f"[OK] [{card_body}] {slug}")
+        print(f"[OK] [{card_body}]")
         results.append(card_body)
 
         time.sleep(0.5)  # evita rate limiting
