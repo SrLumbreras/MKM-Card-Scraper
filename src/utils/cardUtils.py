@@ -7,7 +7,8 @@ from typing import List
 class CardType(Enum):
     Pokemon = 1
     Trainer = 2
-    VSTAR = 3
+    Energy = 3
+    VSTAR = 4
 
 def define_card_type(card_name: str) -> CardType:
     """Determine the type of card based on its name."""
@@ -15,6 +16,8 @@ def define_card_type(card_name: str) -> CardType:
         return CardType.VSTAR
     elif "Trainer" in card_name:
         return CardType.Trainer
+    elif "Energy" in card_name:
+        return CardType.Energy
     else:
         return CardType.Pokemon
     

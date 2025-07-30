@@ -113,8 +113,8 @@ if __name__ == "__main__":
         datefmt="%Y-%m-%d %H:%M:%S"
     )
 
-    # INPUT_FILE = Path("data/brilliant-stars_20250730_140329.json")
-    INPUT_FILE = Path("data/testFile.json")
+    INPUT_FILE = Path("data/brilliant-stars_20250730_140329.json")
+    # INPUT_FILE = Path("data/testFile.json")
     scraper = PKMNCardScraper(INPUT_FILE)
     # scraper.run(max_cards=5)
     scraper.run()
